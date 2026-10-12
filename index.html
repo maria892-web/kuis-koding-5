@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Koding & Ms. Word - Kelas 5 SD</title>
+  <style>
+    /* Styling Ramah Anak & Cerah */
+    * {
+      box-sizing: border-box;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .quiz-card {
+      background-color: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 650px;
+      padding: 30px;
+      border: 5px solid #ff9a9e;
+      position: relative;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #ff6b6b;
+      margin-top: 0;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #4ecdc4;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    /* Form Identitas */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 3px solid #4ecdc4;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: #ff6b6b;
+    }
+
+    /* Tombol Utama */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #ee5253;
+      transition: all 0.1s ease;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      background-color: #ff5252;
+    }
+
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #ee5253;
+    }
+
+    /* Skor & Progress */
+    .header-quiz {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px dashed #ffeaa7;
+    }
+
+    .badge {
+      background-color: #ffeaa7;
+      color: #d63031;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    /* Pilihan Ganda */
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .option-btn {
+      background-color: #f7f1e3;
+      border: 2px solid #d2dae2;
+      border-radius: 12px;
+      padding: 12px 15px;
+      text-align: left;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .option-btn:hover {
+      background-color: #dff9fb;
+      border-color: #22a6b3;
+    }
+
+    /* Sembunyikan Elemen */
+    .hidden {
+      display: none;
+    }
+
+    /* Hasil & Rekap */
+    .result-box {
+      text-align: center;
+    }
+
+    .score-big {
+      font-size: 3.5rem;
+      color: #10ac84;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .success {
+      background-color: #badc58;
+      color: #222f3e;
+    }
+
+    .error {
+      background-color: #ff7675;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <!-- Halaman 1: Identitas Siswa -->
+    <div id="screen-start">
+      <h1>🎮 Kuis Koding & Word 🚀</h1>
+      <p class="subtitle">Kelas 5 SD - Berpikir Komputasional & Ms. Word</p>
+      
+      <div class="form-group">
+        <label for="nama">Nama Lengkap:</label>
+        <input type="text" id="nama" placeholder="Tulis namamu di sini..." required>
+      </div>
+      
+      <div class="form-group">
+        <label for="kelas">Kelas:</label>
+        <input type="text" id="kelas" value="5" placeholder="Contoh: 5A" required>
+      </div>
+
+      <div class="form-group">
+        <label for="absen">Nomor Absen:</label>
+        <input type="number" id="absen" placeholder="Contoh: 12" required>
+      </div>
+
+      <button class="btn" onclick="startQuiz()">Mulai Petualangan! 🎯</button>
+    </div>
+
+    <!-- Halaman 2: Area Soal Kuis -->
+    <div id="screen-quiz" class="hidden">
+      <div class="header-quiz">
+        <span class="badge" id="question-number">Soal 1 / 20</span>
+        <span class="badge" id="live-score">Skor: 0</span>
+      </div>
+
+      <h3 id="question-text" style="color: #2c3e50; min-height: 50px;">Pertanyaan akan muncul di sini...</h3>
+
+      <!-- Container Soal Pilihan Ganda -->
+      <div id="pg-container" class="options-container">
+        <!-- Tombol Pilihan Ganda Dibuat Dinamis via JS -->
+      </div>
+
+      <!-- Container Soal Isian -->
+      <div id="isian-container" class="hidden">
+        <div class="form-group">
+          <input type="text" id="isian-answer" placeholder="Ketik jawaban singkatmu di sini..." autocomplete="off">
+        </div>
+        <button class="btn" onclick="submitIsian()">Jawab & Lanjut ➡️</button>
+      </div>
+    </div>
+
+    <!-- Halaman 3: Rekap Nilai & Kirim Nilai -->
+    <div id="screen-result" class="hidden result-box">
+      <h1>🎉 Selamat! Kamu Selesai! 🎉</h1>
+      <p>Terima kasih sudah menyelesaikan kuis dengan ceria.</p>
+      
+      <div style="text-align: left; background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+        <p style="margin: 5px 0;"><strong>Nama:</strong> <span id="res-nama">-</span></p>
+        <p style="margin: 5px 0;"><strong>Kelas:</strong> <span id="res-kelas">-</span></p>
+        <p style="margin: 5px 0;"><strong>Absen:</strong> <span id="res-absen">-</span></p>
+      </div>
+
+      <p>Nilai Akhir Kamu:</p>
+      <div class="score-big" id="final-score">0</div>
+
+      <button id="btn-send" class="btn" onclick="sendToGoogleSheets()">📤 Kirim Nilai ke Guru</button>
+      <div id="status-msg" class="status-msg hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    // GANTI URL DI BAWAH DENGAN URL WEBHOOK / DEPLOYMENT GOOGLE APPS SCRIPT ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDUmsolK71lOIOJxzjpVIe8qKeJrXkbDxLAP8Z2pP-D0dBURlBPmUuY4Qt-iGg5FnB/exec";
+
+    // Bank Soal (10 Pilihan Ganda + 10 Isian)
+    const questions = [
+      // --- 10 SOAL PILIHAN GANDA ---
+      {
+        type: "pg",
+        question: "1. Memecah masalah besar menjadi bagian-bagian yang lebih kecil dan mudah diselesaikan disebut...",
+        options: ["A. Dekomposisi", "B. Pengenalan Pola", "C. Abstraksi", "D. Algoritma"],
+        answer: "A"
+      },
+      {
+        type: "pg",
+        question: "2. Ketika mencari kesamaan cara menyelesaikan masalah dari pengalaman sebelumnya, kita menggunakan...",
+        options: ["A. Abstraksi", "B. Pengenalan Pola", "C. Algoritma", "D. Dekomposisi"],
+        answer: "B"
+      },
+      {
+        type: "pg",
+        question: "3. Memfokuskan diri pada informasi penting dan mengabaikan detail yang tidak penting disebut...",
+        options: ["A. Dekomposisi", "B. Algoritma", "C. Abstraksi", "D. Pengulangan"],
+        answer: "C"
+      },
+      {
+        type: "pg",
+        question: "4. Langkah-langkah logis dan berurutan untuk menyelesaikan suatu masalah disebut...",
+        options: ["A. Algoritma", "B. Coding", "C. Dekomposisi", "D. Pola"],
+        answer: "A"
+      },
+      {
+        type: "pg",
+        question: "5. Contoh penerapan algoritma dalam kehidupan sehari-hari adalah...",
+        options: ["A. Melamun di kelas", "B. Resep langkah-langkah membuat mie instan", "C. Mewarnai gambar sesuka hati", "D. Meringkas buku cerita"],
+        answer: "B"
+      },
+      {
+        type: "pg",
+        question: "6. Di Microsoft Word, tab menu yang digunakan untuk memasukkan gambar atau tabel adalah...",
+        options: ["A. Home", "B. Insert", "C. View", "D. File"],
+        answer: "B"
+      },
+      {
+        type: "pg",
+        question: "7. Tombol alat (tool) di Ms. Word yang digunakan untuk menebalkan teks adalah...",
+        options: ["A. Italic (I)", "B. Underline (U)", "C. Bold (B)", "D. Font Size"],
+        answer: "C"
+      },
+      {
+        type: "pg",
+        question: "8. Fitur di Microsoft Word yang terdiri dari baris (row) dan kolom (column) adalah...",
+        options: ["A. Picture", "B. Shapes", "C. Table", "D. Header"],
+        answer: "C"
+      },
+      {
+        type: "pg",
+        question: "9. Untuk memasukkan gambar dari laptop/komputer ke dokumen Word, kita memilih menu Insert lalu...",
+        options: ["A. Table", "B. Pictures", "C. Page Number", "D. Shapes"],
+        answer: "B"
+      },
+      {
+        type: "pg",
+        question: "10. Menyusun urutan langkah mencuci tangan yang benar adalah contoh penerapan dari...",
+        options: ["A. Abstraksi", "B. Dekomposisi", "C. Perancangan Algoritma", "D. Pengenalan Pola"],
+        answer: "C"
+      },
+
+      // --- 10 SOAL ISIAN ---
+      {
+        type: "isian",
+        question: "11. Empat pilar berpikir komputasional adalah Dekomposisi, Pengenalan Pola, Abstraksi, dan Perancangan...",
+        answer: ["algoritma"]
+      },
+      {
+        type: "isian",
+        question: "12. Proses memecah masalah kompleks menjadi bagian-bagian kecil disebut...",
+        answer: ["dekomposisi"]
+      },
+      {
+        type: "isian",
+        question: "13. Mengabaikan detail yang tidak penting dan fokus pada hal utama disebut...",
+        answer: ["abstraksi"]
+      },
+      {
+        type: "isian",
+        question: "14. Aplikasi buatan Microsoft yang digunakan untuk mengolah kata dan membuat dokumen bernama Ms. ...",
+        answer: ["word", "microsoft word"]
+      },
+      {
+        type: "isian",
+        question: "15. Untuk memiringkan tulisan di Ms. Word, kita menggunakan tombol...",
+        answer: ["italic", "i"]
+      },
+      {
+        type: "isian",
+        question: "16. Untuk memberi garis bawah pada teks di Ms. Word, kita menggunakan ikon bertuliskan huruf...",
+        answer: ["u", "underline"]
+      },
+      {
+        type: "isian",
+        question: "17. Garis mendatar pada tabel Microsoft Word disebut...",
+        answer: ["baris", "row"]
+      },
+      {
+        type: "isian",
+        question: "18. Garis tegak lurus (vertikal) pada tabel Microsoft Word disebut...",
+        answer: ["kolom", "column"]
+      },
+      {
+        type: "isian",
+        question: "19. Menu Insert -> Pictures digunakan untuk memasukkan ... ke dalam dokumen.",
+        answer: ["gambar", "foto", "image"]
+      },
+      {
+        type: "isian",
+        question: "20. Urutan langkah-langkah yang jelas untuk menyelesaikan masalah disebut...",
+        answer: ["algoritma"]
+      }
+    ];
+
+    // Variabel Game
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let studentData = { nama: "", kelas: "", absen: "" };
+
+    // Fungsi Mulai Kuis
+    function startQuiz() {
+      const nama = document.getElementById("nama").value.trim();
+      const kelas = document.getElementById("kelas").value.trim();
+      const absen = document.getElementById("absen").value.trim();
+
+      if (!nama || !kelas || !absen) {
+        alert("Isi Nama, Kelas, dan Nomor Absen dulu ya!");
+        return;
+      }
+
+      studentData = { nama, kelas, absen };
+
+      document.getElementById("screen-start").classList.add("hidden");
+      document.getElementById("screen-quiz").classList.remove("hidden");
+
+      loadQuestion();
+    }
+
+    // Fungsi Tampilkan Soal
+    function loadQuestion() {
+      const q = questions[currentQuestionIndex];
+      
+      // Update Header
+      document.getElementById("question-number").innerText = `Soal ${currentQuestionIndex + 1} / ${questions.length}`;
+      document.getElementById("live-score").innerText = `Skor: ${score}`;
+      document.getElementById("question-text").innerText = q.question;
+
+      const pgContainer = document.getElementById("pg-container");
+      const isianContainer = document.getElementById("isian-container");
+
+      if (q.type === "pg") {
+        pgContainer.classList.remove("hidden");
+        isianContainer.classList.add("hidden");
+        pgContainer.innerHTML = "";
+
+        q.options.forEach((opt, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.innerText = opt;
+          // Mengambil opsi huruf (A, B, C, D)
+          const optionLetter = ["A", "B", "C", "D"][idx];
+          btn.onclick = () => checkPGAnswer(optionLetter);
+          pgContainer.appendChild(btn);
+        });
+      } else {
+        pgContainer.classList.add("hidden");
+        isianContainer.classList.remove("hidden");
+        document.getElementById("isian-answer").value = "";
+        document.getElementById("isian-answer").focus();
+      }
+    }
+
+    // Cek Jawaban PG
+    function checkPGAnswer(selected) {
+      const q = questions[currentQuestionIndex];
+      if (selected === q.answer) {
+        score += 5; // Total 20 soal x 5 poin = 100
+      }
+      nextQuestion();
+    }
+
+    // Cek Jawaban Isian
+    function submitIsian() {
+      const input = document.getElementById("isian-answer").value.trim().toLowerCase();
+      const q = questions[currentQuestionIndex];
+
+      if (input === "") {
+        alert("Ketik jawabanmu terlebih dahulu ya!");
+        return;
+      }
+
+      if (q.answer.includes(input)) {
+        score += 5;
+      }
+      nextQuestion();
+    }
+
+    // Lanjut ke Soal Berikutnya / Selesai
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    // Tampilkan Hasil Kuis
+    function showResult() {
+      document.getElementById("screen-quiz").classList.add("hidden");
+      document.getElementById("screen-result").classList.remove("hidden");
+
+      document.getElementById("res-nama").innerText = studentData.nama;
+      document.getElementById("res-kelas").innerText = studentData.kelas;
+      document.getElementById("res-absen").innerText = studentData.absen;
+      document.getElementById("final-score").innerText = score;
+    }
+
+    // Pengiriman data ke Google Apps Script (Google Sheets)
+    function sendToGoogleSheets() {
+      const btnSend = document.getElementById("btn-send");
+      const statusMsg = document.getElementById("status-msg");
+
+      btnSend.disabled = true;
+      btnSend.innerText = "⏳ Mengirim Nilai...";
+      statusMsg.classList.add("hidden");
+
+      const payload = {
+        nama: studentData.nama,
+        kelas: studentData.kelas,
+        absen: studentData.absen,
+        nilai: score
+      };
+
+      // Mengirimkan data via POST Request
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", // Menghindari kendala CORS sederhana pada GAS
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        statusMsg.innerText = "✅ Nilai berhasil terkirim ke Google Sheets Guru!";
+        statusMsg.className = "status-msg success";
+        btnSend.innerText = "Selesai ✨";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        statusMsg.innerText = "❌ Gagal mengirim nilai. Periksa koneksi internet.";
+        statusMsg.className = "status-msg error";
+        btnSend.disabled = false;
+        btnSend.innerText = "📤 Coba Kirim Lagi";
+      });
+    }
+  </script>
+</body>
+</html>
